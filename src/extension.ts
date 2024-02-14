@@ -20,6 +20,25 @@ export function activate(ctx: vscode.ExtensionContext) {
           if (!match) {
 						return;
           }
+
+          if (match[0].length > 200000) {
+            const panel = vscode.window.createWebviewPanel(
+              'base64Image',
+              'Image Preview',
+              vscode.ViewColumn.One,
+              { enableScripts: false }
+            );
+    
+            // close the panel when's no longer focused
+            panel.onDidChangeViewState(e => {
+              if (panel.visible === false) {
+                panel.dispose(); 
+              }
+            });
+            panel.webview.html = `<img src="${match[0]}" style="max-width: 100%; max-height: 100vh; object-fit: contain;">`;
+	    return;
+          }
+
           return new vscode.Hover(
             new vscode.MarkdownString(`![image](${match[0]})`)
           );
